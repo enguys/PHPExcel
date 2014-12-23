@@ -1719,11 +1719,11 @@ class PHPExcel_Calculation {
 
 
 	private function __construct(PHPExcel $workbook = NULL) {
-		$setPrecision = (PHP_INT_SIZE == 4) ? 14 : 16;
-		$this->_savedPrecision = ini_get('precision');
-		if ($this->_savedPrecision < $setPrecision) {
-			ini_set('precision',$setPrecision);
-		}
+//		$setPrecision = (PHP_INT_SIZE == 4) ? 14 : 16;
+//		$this->_savedPrecision = ini_get('precision');
+//		if ($this->_savedPrecision < $setPrecision) {
+//			ini_set('precision',$setPrecision);
+//		}
 
 		if ($workbook !== NULL) {
 			self::$_workbookSets[$workbook->getID()] = $this;
@@ -1736,9 +1736,9 @@ class PHPExcel_Calculation {
 
 
 	public function __destruct() {
-		if ($this->_savedPrecision != ini_get('precision')) {
-			ini_set('precision',$this->_savedPrecision);
-		}
+//		if ($this->_savedPrecision != ini_get('precision')) {
+//			ini_set('precision',$this->_savedPrecision);
+//		}
 	}
 
 	private static function _loadLocales() {
