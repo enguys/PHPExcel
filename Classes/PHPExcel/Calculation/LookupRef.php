@@ -734,12 +734,7 @@ class PHPExcel_Calculation_LookupRef {
 				//	if an exact match is required, we have what we need to return an appropriate response
 				return PHPExcel_Calculation_Functions::NA();
 			} else {
-				//	otherwise return the appropriate value
-				$result = $lookup_array[$rowNumber][$returnColumn];
-				if ((is_numeric($lookup_value) && is_numeric($result)) ||
-					(!is_numeric($lookup_value) && !is_numeric($result))) {
-					return $result;
-				}
+				return $lookup_array[$rowNumber][$returnColumn];
 			}
 		}
 
@@ -802,8 +797,7 @@ class PHPExcel_Calculation_LookupRef {
                 return PHPExcel_Calculation_Functions::NA();
             } else {
                 //  otherwise return the appropriate value
-                $result = $lookup_array[$returnColumn][$rowNumber];
-				return $result;
+				return $lookup_array[$returnColumn][$rowNumber];
             }
         }
 
