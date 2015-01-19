@@ -1719,11 +1719,12 @@ class PHPExcel_Calculation {
 
 
 	private function __construct(PHPExcel $workbook = NULL) {
-//		$setPrecision = (PHP_INT_SIZE == 4) ? 14 : 16;
+		$setPrecision = (PHP_INT_SIZE == 4) ? 14 : 16;
 //		$this->_savedPrecision = ini_get('precision');
 //		if ($this->_savedPrecision < $setPrecision) {
 //			ini_set('precision',$setPrecision);
 //		}
+		$this->delta = 1 * pow(10, -$setPrecision);
 
 		if ($workbook !== NULL) {
 			self::$_workbookSets[$workbook->getID()] = $this;
@@ -3592,27 +3593,39 @@ class PHPExcel_Calculation {
 				break;
 			//	Equality
 			case '=':
-				$result = ($operand1 == $operand2);
+				if (is_numeric($operand1) && is_numeric($operand2)) {
+					$result = (abs($operand1 - $operand2) < $this->delta);
+				} else {
+					$result = strcmp($operand1, $operand2) == 0;
+				}
 				break;
 			//	Greater than or equal
 			case '>=':
-				if ($useLowercaseFirstComparison) {
+				if (is_numeric($operand1) && is_numeric($operand2)) {
+					$result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 > $operand2));
+				} elseif ($useLowercaseFirstComparison) {
 					$result = $this->strcmpLowercaseFirst($operand1, $operand2) >= 0;
 				} else {
-					$result = ($operand1 >= $operand2);
+					$result = strcmp($operand1, $operand2) >= 0;
 				}
 				break;
 			//	Less than or equal
 			case '<=':
-				if ($useLowercaseFirstComparison) {
+				if (is_numeric($operand1) && is_numeric($operand2)) {
+					$result = ((abs($operand1 - $operand2) < $this->delta) || ($operand1 < $operand2));
+				} elseif ($useLowercaseFirstComparison) {
 					$result = $this->strcmpLowercaseFirst($operand1, $operand2) <= 0;
 				} else {
-					$result = ($operand1 <= $operand2);
+					$result = strcmp($operand1, $operand2) <= 0;
 				}
 				break;
 			//	Inequality
 			case '<>':
-				$result = ($operand1 != $operand2);
+				if (is_numeric($operand1) && is_numeric($operand2)) {
+					$result = (abs($operand1 - $operand2) > 1E-14);
+				} else {
+					$result = strcmp($operand1, $operand2) != 0;
+				}
 				break;
 		}
 
@@ -3620,8 +3633,8 @@ class PHPExcel_Calculation {
 		$this->_debugLog->writeDebugLog('Evaluation Result is ', $this->_showTypeDetails($result));
 		//	And push the result onto the stack
 		$stack->push('Value',$result);
-		return TRUE;
-	}	//	function _executeBinaryComparisonOperation()
+		return true;
+	}
 
 	/**
 	 * Compare two strings in the same way as strcmp() except that lowercase come before uppercase letters
@@ -3631,10 +3644,8 @@ class PHPExcel_Calculation {
 	 */
 	private function strcmpLowercaseFirst($str1, $str2)
 	{
-		$from = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-		$to = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$inversedStr1 = strtr($str1, $from, $to);
-		$inversedStr2 = strtr($str2, $from, $to);
+		$inversedStr1 = PHPExcel_Shared_String::StrCaseReverse($str1);
+		$inversedStr2 = PHPExcel_Shared_String::StrCaseReverse($str2);
 
 		return strcmp($inversedStr1, $inversedStr2);
 	}

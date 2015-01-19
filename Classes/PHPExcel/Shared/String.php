@@ -626,6 +626,41 @@ class PHPExcel_Shared_String
 		return ucwords($pValue);
 	}
 
+	public static function mb_is_upper($char)
+	{
+		return mb_strtolower($char, "UTF-8") != $char;
+	}
+
+	public static function mb_str_split($string)
+	{
+		# Split at all position not after the start: ^
+		# and not before the end: $
+		return preg_split('/(?<!^)(?!$)/u', $string );
+	}
+
+	/**
+	 * Reverse the case of a string, so that all uppercase characters become lowercase
+	 *    and all lowercase characters become uppercase
+	 *
+	 * @param string $pValue UTF-8 encoded string
+	 * @return string
+	 */
+	public static function StrCaseReverse($pValue = '')
+	{
+		if (self::getIsMbstringEnabled()) {
+			$characters = self::mb_str_split($pValue);
+			foreach($characters as &$character) {
+				if(self::mb_is_upper($character)) {
+					$character = mb_strtolower($character, 'UTF-8');
+				} else {
+					$character = mb_strtoupper($character, 'UTF-8');
+				}
+			}
+			return implode('', $characters);
+		}
+		return strtolower($pValue) ^ strtoupper($pValue) ^ $pValue;
+	}
+
 	/**
 	 * Identify whether a string contains a fractional numeric value,
 	 *    and convert it to a numeric if it is
