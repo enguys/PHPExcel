@@ -1050,6 +1050,10 @@ class PHPExcel_Calculation {
 												 'functionCall'		=>	'PHPExcel_Calculation_Statistical::LINEST',
 												 'argumentCount'	=>	'1-4'
 												),
+                'LINEARINTERP'          => array('category'			=>	PHPExcel_Calculation_Function::CATEGORY_MATH_AND_TRIG,
+                                                 'functionCall'		=>	'PHPExcel_Calculation_MathTrig::LINEARINTERP',
+                                                 'argumentCount'	=>	'3'
+                                                ),
 				'LN'					=> array('category'			=>	PHPExcel_Calculation_Function::CATEGORY_MATH_AND_TRIG,
 												 'functionCall'		=>	'log',
 												 'argumentCount'	=>	'1'
