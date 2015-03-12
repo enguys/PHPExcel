@@ -1369,5 +1369,40 @@ class PHPExcel_Calculation_MathTrig {
 
 		return (intval($value * $adjust)) / $adjust;
 	}	//	function TRUNC()
-
+	
+	public static function LINEARINTERP($x, $xValues, $yValues) {
+	        $x = PHPExcel_Calculation_Functions::flattenSingleValue($x);
+	        $xValues = PHPExcel_Calculation_Functions::flattenArray($xValues);
+	        $yValues = PHPExcel_Calculation_Functions::flattenArray($yValues);
+	
+	        $gap = false;
+	        $n = 0;
+	
+	        $xValuesLength = count($xValues);
+	        while ($gap == false && $n + 1 < $xValuesLength) {
+	            $n1 = $n + 1;
+	            if ($x > $xValues[$n] && $x < $xValues[$n1]) {
+	                $gap = true;
+	            } elseif ($x == $xValues[$n1]) {
+	                $gap = true;
+	                $n = $n1;
+	            } else {
+	                $n = $n1;
+	            }
+	        }
+	        if ($n + 1 < $xValuesLength) {
+	            if ($x == $xValues[$n]) {
+	                return $yValues[$n];
+	            }
+	            if ($x == $xValues[$n + 1]) {
+	                return $yValues[$n + 1];
+	            }
+	            $ratio = $x - $xValues[$n] / ($xValues[$n + 1] - $xValues[$n]);
+	            $diff = $yValues[$n + 1] - $yValues[$n];
+	
+	            return $yValues[$n] + $ratio * $diff;
+	        }
+	
+	        return PHPExcel_Calculation_Functions::VALUE();
+    	}
 }	//	class PHPExcel_Calculation_MathTrig
