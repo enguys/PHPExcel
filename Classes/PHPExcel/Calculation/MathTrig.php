@@ -1370,6 +1370,16 @@ class PHPExcel_Calculation_MathTrig {
 		return (intval($value * $adjust)) / $adjust;
 	}	//	function TRUNC()
 	
+	/**
+     	 * LINEARINTERP
+     	 *
+     	 * LINEARINTERP value - custom function of ausenco
+     	 *
+     	 * @param    float $x
+     	 * @param    $xValues array
+     	 * @param    $yValues array
+     	 * @return   float
+     	*/
 	public static function LINEARINTERP($x, $xValues, $yValues) {
 	        $x = PHPExcel_Calculation_Functions::flattenSingleValue($x);
 	        $xValues = PHPExcel_Calculation_Functions::flattenArray($xValues);
