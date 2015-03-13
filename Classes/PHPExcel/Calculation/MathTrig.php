@@ -1375,34 +1375,35 @@ class PHPExcel_Calculation_MathTrig {
 	        $xValues = PHPExcel_Calculation_Functions::flattenArray($xValues);
 	        $yValues = PHPExcel_Calculation_Functions::flattenArray($yValues);
 	
-	        $gap = false;
 	        $n = 0;
 	
 	        $xValuesLength = count($xValues);
-	        while ($gap == false && $n + 1 < $xValuesLength) {
+	        while ($n < $xValuesLength) {
 	            $n1 = $n + 1;
-	            if ($x > $xValues[$n] && $x < $xValues[$n1]) {
-	                $gap = true;
-	            } elseif ($x == $xValues[$n1]) {
-	                $gap = true;
-	                $n = $n1;
-	            } else {
-	                $n = $n1;
-	            }
-	        }
-	        if ($n + 1 < $xValuesLength) {
 	            if ($x == $xValues[$n]) {
 	                return $yValues[$n];
 	            }
-	            if ($x == $xValues[$n + 1]) {
-	                return $yValues[$n + 1];
+	            if (isset($xValues[$n1])) {
+	                if ($x == $xValues[$n1]) {
+	                    return $yValues[$n1];
+	                }
+	                if ($x > $xValues[$n] && $x < $xValues[$n1]) {
+	                    break;
+	                }
+	            } else {
+	                break;
 	            }
-	            $ratio = $x - $xValues[$n] / ($xValues[$n + 1] - $xValues[$n]);
-	            $diff = $yValues[$n + 1] - $yValues[$n];
+	            $n = $n1;
+	        }
+	
+	        $n1 = $n + 1;
+	        if ($n1 < $xValuesLength) {
+	            $ratio = ($x - $xValues[$n]) / ($xValues[$n1] - $xValues[$n]);
+	            $diff = $yValues[$n1] - $yValues[$n];
 	
 	            return $yValues[$n] + $ratio * $diff;
 	        }
-	
+
 	        return PHPExcel_Calculation_Functions::VALUE();
     	}
 }	//	class PHPExcel_Calculation_MathTrig
