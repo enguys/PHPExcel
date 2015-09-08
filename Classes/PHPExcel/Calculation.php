@@ -3439,14 +3439,22 @@ class PHPExcel_Calculation {
 						if ($passCellReference) {
 							$args[] = $pCell;
 						}
+						$excelError = ["#NULL!", "#DIV/0!", "#VALUE!", "#REF!", "#NAME?", "#NUM!", "#N/A"];
+						$resultError = false;
 						if (strpos($functionCall,'::') !== FALSE) {
 							$result = call_user_func_array(explode('::',$functionCall),$args);
 						} else {
 							foreach($args as &$arg) {
 								$arg = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
+								if (in_array($arg, $excelError)) {
+									$result = $arg;
+									$resultError = true;
+								}
 							}
-							unset($arg);
-							$result = call_user_func_array($functionCall,$args);
+							if (!$resultError) {
+								unset($arg);
+								$result = call_user_func_array($functionCall,$args);
+							}
 						}
 //					}
 					if ($functionName != 'MKMATRIX') {
@@ -3946,4 +3954,3 @@ class PHPExcel_Calculation {
 	}	//	function listFunctionNames()
 
 }	//	class PHPExcel_Calculation
-
