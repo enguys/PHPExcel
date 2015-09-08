@@ -3446,7 +3446,7 @@ class PHPExcel_Calculation {
 						} else {
 							foreach($args as &$arg) {
 								$arg = PHPExcel_Calculation_Functions::flattenSingleValue($arg);
-								if (in_array($arg, $excelError)) {
+								if (in_array($arg, $excelError, true)) {
 									$result = $arg;
 									$resultError = true;
 								}
