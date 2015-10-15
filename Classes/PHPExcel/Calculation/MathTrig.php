@@ -148,10 +148,8 @@ class PHPExcel_Calculation_MathTrig {
 		if ((is_numeric($number)) && (is_numeric($significance))) {
 			if ($significance == 0.0) {
 				return 0.0;
-			} elseif (self::SIGN($number) == self::SIGN($significance)) {
-				return ceil($number / $significance) * $significance;
 			} else {
-				return PHPExcel_Calculation_Functions::NaN();
+				return ceil($number / $significance) * $significance;
 			}
 		}
 		return PHPExcel_Calculation_Functions::VALUE();
