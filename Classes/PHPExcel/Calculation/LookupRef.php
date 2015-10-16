@@ -694,10 +694,12 @@ class PHPExcel_Calculation_LookupRef {
         $lookup_value    = PHPExcel_Calculation_Functions::flattenSingleValue($lookup_value);
         $index_number    = PHPExcel_Calculation_Functions::flattenSingleValue($index_number);
         $not_exact_match = PHPExcel_Calculation_Functions::flattenSingleValue($not_exact_match);
+
         // index_number must be greater than or equal to 1
         if ($index_number < 1) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
+
         // index_number must be less than or equal to the number of columns in lookup_array
         if ((!is_array($lookup_array)) || (empty($lookup_array))) {
             return PHPExcel_Calculation_Functions::REF();
@@ -712,18 +714,43 @@ class PHPExcel_Calculation_LookupRef {
                 $firstColumn = array_shift($columnKeys);
             }
         }
+
         if (!$not_exact_match) {
             uasort($lookup_array, array('self', 'vlookupSort'));
         }
+
         $rowNumber = $rowValue = false;
+        $lookupValueNumeric = true;
+        if (!is_numeric($lookup_value)) {
+            $lookupValueNumeric = false;
+            $lookup_value_lower = strtolower($lookup_value);
+        }
         foreach ($lookup_array as $rowKey => $rowData) {
-            if ((is_numeric($lookup_value) && is_numeric($rowData[$firstColumn]) && ($rowData[$firstColumn] > $lookup_value)) ||
-                (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]) && (strtolower($rowData[$firstColumn]) > strtolower($lookup_value)))) {
-                break;
+            if ($lookupValueNumeric && is_numeric($rowData[$firstColumn])) {
+                if ($lookup_value == $rowData[$firstColumn]) {
+                    $rowNumber = $rowKey;
+                    $rowValue = $rowData[$firstColumn];
+                    break;
+                }
+                if (!$not_exact_match && ($rowData[$firstColumn] > $lookup_value)) {
+                    break;
+                }
+            }
+            if (!$lookupValueNumeric && !is_numeric($rowData[$firstColumn])) {
+                $dataFirstColumnLower = strtolower($rowData[$firstColumn]);
+                if ($dataFirstColumnLower == $lookup_value_lower) {
+                    $rowNumber = $rowKey;
+                    $rowValue = $rowData[$firstColumn];
+                    break;
+                }
+                if (!$not_exact_match && ($dataFirstColumnLower > $lookup_value_lower)) {
+                    break;
+                }
             }
             $rowNumber = $rowKey;
             $rowValue = $rowData[$firstColumn];
         }
+
         if ($rowNumber !== false) {
             if ((!$not_exact_match) && ($rowValue != $lookup_value)) {
                 //    if an exact match is required, we have what we need to return an appropriate response
@@ -733,6 +760,7 @@ class PHPExcel_Calculation_LookupRef {
                 return $lookup_array[$rowNumber][$returnColumn];
             }
         }
+
         return PHPExcel_Calculation_Functions::NA();
     }
 
