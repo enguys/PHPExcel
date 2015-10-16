@@ -716,7 +716,17 @@ class PHPExcel_Calculation_LookupRef {
         }
 
         if (!$not_exact_match) {
-            uasort($lookup_array, array('self', 'vlookupSort'));
+            $firstColumnType = gettype($lookup_array[$firstRow][$firstColumn]);
+	    $firstColumnOneType = true;
+	    foreach ($lookup_array as $rowData) {
+		if (gettype($rowData[$firstColumn]) != $firstColumnType) {
+		    $firstColumnOneType = false;
+		    break;
+		}
+	    }
+	    if($firstColumnOneType){
+		uasort($lookup_array, array('self', 'vlookupSort'));
+	    }
         }
 
         $rowNumber = $rowValue = false;
