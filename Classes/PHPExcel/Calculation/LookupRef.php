@@ -732,7 +732,7 @@ class PHPExcel_Calculation_LookupRef {
                     $rowValue = $rowData[$firstColumn];
                     break;
                 }
-                if (!$not_exact_match && ($rowData[$firstColumn] > $lookup_value)) {
+                if ($rowData[$firstColumn] > $lookup_value) {
                     break;
                 }
             }
@@ -743,7 +743,7 @@ class PHPExcel_Calculation_LookupRef {
                     $rowValue = $rowData[$firstColumn];
                     break;
                 }
-                if (!$not_exact_match && ($dataFirstColumnLower > $lookup_value_lower)) {
+                if ($dataFirstColumnLower > $lookup_value_lower) {
                     break;
                 }
             }
