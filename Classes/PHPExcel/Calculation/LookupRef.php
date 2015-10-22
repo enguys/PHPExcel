@@ -715,19 +715,7 @@ class PHPExcel_Calculation_LookupRef {
             }
         }
 
-        if (!$not_exact_match) {
-            $firstColumnType = gettype($lookup_array[$firstRow][$firstColumn]);
-	    $firstColumnOneType = true;
-	    foreach ($lookup_array as $rowData) {
-		if (gettype($rowData[$firstColumn]) != $firstColumnType) {
-		    $firstColumnOneType = false;
-		    break;
-		}
-	    }
-	    if($firstColumnOneType){
-		uasort($lookup_array, array('self', 'vlookupSort'));
-	    }
-        }
+		// @todo remove sort vlookup
 
         $rowNumber = $rowValue = false;
         $lookupValueNumeric = true;
@@ -742,7 +730,7 @@ class PHPExcel_Calculation_LookupRef {
                     $rowValue = $rowData[$firstColumn];
                     break;
                 }
-                if ($rowData[$firstColumn] > $lookup_value) {
+                if ($not_exact_match && ($rowData[$firstColumn] > $lookup_value)) {
                     break;
                 }
             }
@@ -753,7 +741,7 @@ class PHPExcel_Calculation_LookupRef {
                     $rowValue = $rowData[$firstColumn];
                     break;
                 }
-                if ($dataFirstColumnLower > $lookup_value_lower) {
+                if ($not_exact_match && ($dataFirstColumnLower > $lookup_value_lower)) {
                     break;
                 }
             }
