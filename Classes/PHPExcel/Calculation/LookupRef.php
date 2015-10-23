@@ -754,8 +754,11 @@ class PHPExcel_Calculation_LookupRef {
                 //    if an exact match is required, we have what we need to return an appropriate response
                 return PHPExcel_Calculation_Functions::NA();
             } else {
-                //    otherwise return the appropriate value
-                return $lookup_array[$rowNumber][$returnColumn];
+                $valueReturn = $lookup_array[$rowNumber][$returnColumn];
+				if ($valueReturn == null || trim($valueReturn) == ''){
+					$valueReturn = 0;
+				}
+                return $valueReturn;
             }
         }
 
